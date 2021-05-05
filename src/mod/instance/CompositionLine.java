@@ -12,11 +12,12 @@ import Define.AreaDefine;
 import Pack.DragPack;
 import bgWork.handler.CanvasPanelHandler;
 import mod.IFuncComponent;
+import mod.ILine;
 import mod.ILinePainter;
 import java.lang.Math;
 
 public class CompositionLine extends JPanel
-		implements IFuncComponent, ILinePainter
+		implements IFuncComponent, ILinePainter, ILine
 {
 	JPanel				from;
 	int					fromSide;
@@ -53,7 +54,9 @@ public class CompositionLine extends JPanel
 		paintArrow(g, tpPrime);
 		if (isSelect == true)
 		{
-			paintSelect(g);
+			g.setColor(Color.RED);
+			g.drawLine(fpPrime.x, fpPrime.y, tpPrime.x, tpPrime.y);
+			// paintSelect(g);
 		}
 	}
 
@@ -112,7 +115,7 @@ public class CompositionLine extends JPanel
 		}
 	}
 
-	Point getConnectPoint(JPanel jp, int side)
+	public Point getConnectPoint(JPanel jp, int side)
 	{
 		Point temp = new Point(0, 0);
 		Point jpLocation = cph.getAbsLocation(jp);
@@ -160,5 +163,25 @@ public class CompositionLine extends JPanel
 	public void setSelect(boolean isSelect)
 	{
 		this.isSelect = isSelect;
+	}
+
+	@Override
+	public JPanel getFrom() {
+		return from;
+	}
+
+	@Override
+	public JPanel getTo() {
+		return to;
+	}
+
+	@Override
+	public int getFromSide() {
+		return fromSide;
+	}
+
+	@Override
+	public int getToSide() {
+		return toSide;
 	}
 }

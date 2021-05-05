@@ -2,7 +2,6 @@ package Listener;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import Pack.DragPack;
@@ -10,7 +9,7 @@ import bgWork.handler.CanvasPanelHandler;
 import bgWork.handler.PanelHandler;
 
 public class CPHActionListener extends HandlerActionListener
-		implements MouseMotionListener, MouseListener
+		implements MouseMotionListener
 {
 	Point	from		= new Point(0, 0);
 	Object	fromObj;

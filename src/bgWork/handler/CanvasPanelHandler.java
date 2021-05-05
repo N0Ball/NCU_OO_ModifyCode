@@ -10,6 +10,7 @@ import java.util.Vector;
 
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
+import javax.swing.text.Highlighter.Highlight;
 
 import Listener.CPHActionListener;
 import Pack.DragPack;
@@ -18,13 +19,16 @@ import bgWork.InitProcess;
 import mod.instance.AssociationLine;
 import mod.instance.BasicClass;
 import mod.instance.CompositionLine;
+import mod.instance.DependencyLine;
 import mod.instance.GeneralizationLine;
 import mod.instance.GroupContainer;
 import mod.instance.UseCase;
+import mod.ILine;
 
 public class CanvasPanelHandler extends PanelHandler
 {
 	Vector <JPanel>	members		= new Vector <>();
+	Vector <ILine> lines        = new Vector <>();
 	Vector <JPanel>	selectComp	= new Vector <>();
 	int				boundShift	= 10;
 
@@ -63,9 +67,10 @@ public class CanvasPanelHandler extends PanelHandler
 			case 1:
 			case 2:
 			case 3:
-				break;
 			case 4:
+				break;
 			case 5:
+			case 6:
 				addObject(core.getCurrentFunc(), e.getPoint());
 				break;
 			default:
@@ -84,10 +89,11 @@ public class CanvasPanelHandler extends PanelHandler
 			case 1:
 			case 2:
 			case 3:
+			case 4:
 				addLine(core.getCurrentFunc(), dp);
 				break;
-			case 4:
 			case 5:
+			case 6:
 				break;
 			default:
 				break;
@@ -108,6 +114,10 @@ public class CanvasPanelHandler extends PanelHandler
 	{
 		boolean isSelect = false;
 		selectComp = new Vector <>();
+		for (ILine line: lines)
+		{
+			line.setSelect(false);
+		} 
 		for (int i = 0; i < members.size(); i ++)
 		{
 			if (isInside(members.elementAt(i), e.getPoint()) == true
@@ -117,15 +127,17 @@ public class CanvasPanelHandler extends PanelHandler
 				{
 					case 0:
 						((BasicClass) members.elementAt(i)).setSelect(true);
+						highlightPort(members.elementAt(i), ((BasicClass) members.elementAt(i)).getPort(e.getPoint()));
 						selectComp.add(members.elementAt(i));
 						isSelect = true;
 						break;
 					case 1:
 						((UseCase) members.elementAt(i)).setSelect(true);
+						highlightPort(members.elementAt(i), ((UseCase) members.elementAt(i)).getPort(e.getPoint()));
 						selectComp.add(members.elementAt(i));
 						isSelect = true;
 						break;
-					case 5:
+					case 6:
 						Point p = e.getPoint();
 						p.x -= members.elementAt(i).getLocation().x;
 						p.y -= members.elementAt(i).getLocation().y;
@@ -183,6 +195,39 @@ public class CanvasPanelHandler extends PanelHandler
 			}
 		}
 		return false;
+	}
+
+	public void highlightPort(JPanel obj, int side)
+	{
+		if (side != -1)
+		{
+			for (ILine line: lines)
+			{
+				if (line.getFrom() == obj)
+				{
+					if (line.getFromSide() == side)
+					{
+						line.setSelect(true);
+						continue;
+					}
+				}
+				
+				if (line.getTo() == obj)
+				{
+					if (line.getToSide() == side)
+					{
+						line.setSelect(true);
+						continue;
+					}
+				}
+				
+				line.setSelect(false);
+
+			}
+
+			System.out.println("Pressed Port");
+
+		}
 	}
 
 	boolean selectByDrag(DragPack dp)
@@ -387,14 +432,18 @@ public class CanvasPanelHandler extends PanelHandler
 						((AssociationLine) funcObj).setConnect(dPack);
 						break;
 					case 1:
-						((CompositionLine) funcObj).setConnect(dPack);
+						((DependencyLine) funcObj).setConnect(dPack);
 						break;
 					case 2:
+						((CompositionLine) funcObj).setConnect(dPack);
+						break;
+					case 3:
 						((GeneralizationLine) funcObj).setConnect(dPack);
 						break;
 					default:
 						break;
 				}
+				lines.add((ILine) funcObj);
 				contextPanel.add(funcObj, 0);
 				break;
 		}
@@ -511,12 +560,15 @@ public class CanvasPanelHandler extends PanelHandler
 				((AssociationLine) obj).setSelect(isSelect);
 				break;
 			case 3:
-				((CompositionLine) obj).setSelect(isSelect);
+				((DependencyLine) obj).setSelect(isSelect);
 				break;
 			case 4:
-				((GeneralizationLine) obj).setSelect(isSelect);
+				((CompositionLine) obj).setSelect(isSelect);
 				break;
 			case 5:
+				((GeneralizationLine) obj).setSelect(isSelect);
+				break;
+			case 6:
 				((GroupContainer) obj).setSelect(isSelect);
 				break;
 			default:
