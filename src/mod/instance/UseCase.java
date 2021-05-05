@@ -3,6 +3,8 @@ package mod.instance;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
+
 import java.util.Vector;
 
 import javax.swing.JPanel;
@@ -65,6 +67,56 @@ public class UseCase extends JPanel implements IFuncComponent, IClassPainter
 	public void setSelect(boolean isSelect)
 	{
 		this.isSelect = isSelect;
+	}
+
+	public int getPort(Point pt)
+	{
+		System.out.println(pt.x);
+		System.out.println(pt.y);
+		System.out.println(this.getLocation().x + this.getWidth() / 2 - selectBoxSize);
+		System.out.println(this.getLocation().y);
+
+		// Top
+		if (this.getLocation().x + this.getWidth() / 2 - selectBoxSize < pt.x && this.getLocation().x + this.getWidth() / 2 + selectBoxSize > pt.x)
+		{
+			if (this.getLocation().y < pt.y && this.getLocation().y + selectBoxSize > pt.y)
+			{
+				System.out.println("Select Top");
+				return 3;
+			}
+		}
+
+		// Left
+		if (this.getLocation().x < pt.x && this.getLocation().x + selectBoxSize > pt.x)
+		{
+			if (this.getLocation().y + this.getHeight() / 2 - selectBoxSize < pt.y && this.getLocation().y + this.getHeight() / 2 + selectBoxSize  > pt.y)
+			{
+				System.out.println("Select Left");
+				return 1;
+			}
+		}
+
+		// Right
+		if (this.getLocation().x + this.getWidth() - selectBoxSize < pt.x && this.getLocation().x + this.getWidth() > pt.x)
+		{
+			if (this.getLocation().y + this.getHeight() / 2 - selectBoxSize < pt.y && this.getLocation().y + this.getHeight() / 2 + selectBoxSize  > pt.y)
+			{
+				System.out.println("Select Right");
+				return 2;
+			}
+		}
+
+		// Bottom
+		if (this.getLocation().x + this.getWidth() / 2 - selectBoxSize < pt.x && this.getLocation().x + this.getWidth() / 2 + selectBoxSize > pt.x)
+		{
+			if (this.getLocation().y + this.getHeight() - selectBoxSize < pt.y && this.getLocation().y + this.getHeight() > pt.y)
+			{
+				System.out.println("Select Bottom");
+				return 0;
+			}
+		}
+
+		return -1;
 	}
 
 	@Override

@@ -4,7 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Stroke;
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 
 import javax.swing.JPanel;
 
@@ -16,7 +19,7 @@ import mod.ILine;
 import mod.ILinePainter;
 import java.lang.Math;
 
-public class AssociationLine extends JPanel
+public class DependencyLine extends JPanel
 		implements IFuncComponent, ILinePainter, ILine
 {
 	JPanel				from;
@@ -25,11 +28,12 @@ public class AssociationLine extends JPanel
 	JPanel				to;
 	int					toSide;
 	Point				tp				= new Point(0, 0);
+	int					arrowSize		= 6;
 	boolean				isSelect		= false;
 	int					selectBoxSize	= 5;
 	CanvasPanelHandler	cph;
 
-	public AssociationLine(CanvasPanelHandler cph)
+	public DependencyLine(CanvasPanelHandler cph)
 	{
 		this.setOpaque(false);
 		this.setVisible(true);
@@ -41,7 +45,6 @@ public class AssociationLine extends JPanel
 	public void paintComponent(Graphics g)
 	{
 		Graphics2D g2d = (Graphics2D) g;
-		System.out.println("Ass");
 		Point fpPrime;
 		Point tpPrime;
 		renewConnect();
@@ -49,15 +52,19 @@ public class AssociationLine extends JPanel
 				fp.y - this.getLocation().y);
 		tpPrime = new Point(tp.x - this.getLocation().x,
 				tp.y - this.getLocation().y);
-		g.drawLine(fpPrime.x, fpPrime.y, tpPrime.x, tpPrime.y);
 		paintArrow(g, tpPrime);
-
-		if (isSelect)
+		Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+				0, new float[]{9}, 0);
+		g2d.setStroke(dashed);
+		g2d.drawLine(fpPrime.x, fpPrime.y, tpPrime.x, tpPrime.y);
+		if (isSelect == true)
 		{
 			g.setColor(Color.RED);
 			g.drawLine(fpPrime.x, fpPrime.y, tpPrime.x, tpPrime.y);
 			// paintSelect(g);
 		}
+		g2d.dispose();
+
 	}
 
 	@Override
@@ -72,7 +79,36 @@ public class AssociationLine extends JPanel
 	@Override
 	public void paintArrow(Graphics g, Point point)
 	{
-		// TODO Auto-generated method stub
+		int x[] =
+		{point.x, point.x - arrowSize, point.x, point.x + arrowSize};
+		int y[] =
+		{point.y + arrowSize, point.y, point.y - arrowSize, point.y};
+		switch (toSide)
+		{
+			case 0:
+				x = removeAt(x, 0);
+				y = removeAt(y, 0);
+				break;
+			case 1:
+				x = removeAt(x, 1);
+				y = removeAt(y, 1);
+				break;
+			case 2:
+				x = removeAt(x, 3);
+				y = removeAt(y, 3);
+				break;
+			case 3:
+				x = removeAt(x, 2);
+				y = removeAt(y, 2);
+				break;
+			default:
+				break;
+		}
+		Polygon polygon = new Polygon(x, y, x.length);
+		g.setColor(Color.WHITE);
+		g.fillPolygon(polygon);
+		g.setColor(Color.BLACK);
+		g.drawPolygon(polygon);
 	}
 
 	@Override
@@ -155,6 +191,23 @@ public class AssociationLine extends JPanel
 		this.isSelect = isSelect;
 	}
 
+	int[] removeAt(int arr[], int index)
+	{
+		int temp[] = new int[arr.length - 1];
+		for (int i = 0; i < temp.length; i ++)
+		{
+			if (i < index)
+			{
+				temp[i] = arr[i];
+			}
+			else if (i >= index)
+			{
+				temp[i] = arr[i + 1];
+			}
+		}
+		return temp;
+	}
+	
 	@Override
 	public JPanel getFrom() {
 		return from;

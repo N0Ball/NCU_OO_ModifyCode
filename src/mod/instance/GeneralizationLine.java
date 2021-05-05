@@ -12,11 +12,12 @@ import Define.AreaDefine;
 import Pack.DragPack;
 import bgWork.handler.CanvasPanelHandler;
 import mod.IFuncComponent;
+import mod.ILine;
 import mod.ILinePainter;
 import java.lang.Math;
 
 public class GeneralizationLine extends JPanel
-		implements IFuncComponent, ILinePainter
+		implements IFuncComponent, ILinePainter, ILine
 {
 	JPanel				from;
 	int					fromSide;
@@ -48,12 +49,16 @@ public class GeneralizationLine extends JPanel
 				fp.y - this.getLocation().y);
 		tpPrime = new Point(tp.x - this.getLocation().x,
 				tp.y - this.getLocation().y);
+		fp = new Point(fpPrime.x, fpPrime.y);
+		tp = new Point(tpPrime.x, tpPrime.y);
 		g.setColor(Color.BLACK);
 		g.drawLine(fpPrime.x, fpPrime.y, tpPrime.x, tpPrime.y);
 		paintArrow(g, tpPrime);
 		if (isSelect == true)
 		{
-			paintSelect(g);
+			g.setColor(Color.RED);
+			g.drawLine(fpPrime.x, fpPrime.y, tpPrime.x, tpPrime.y);
+			// paintSelect(g);
 		}
 	}
 
@@ -116,7 +121,6 @@ public class GeneralizationLine extends JPanel
 		renewConnect();
 		System.out.println("from side " + fromSide);
 		System.out.println("to side " + toSide);
-		;
 	}
 
 	void renewConnect()
@@ -134,7 +138,7 @@ public class GeneralizationLine extends JPanel
 		}
 	}
 
-	Point getConnectPoint(JPanel jp, int side)
+	public Point getConnectPoint(JPanel jp, int side)
 	{
 		Point temp = new Point(0, 0);
 		Point jpLocation = cph.getAbsLocation(jp);
@@ -199,5 +203,25 @@ public class GeneralizationLine extends JPanel
 	public void setSelect(boolean isSelect)
 	{
 		this.isSelect = isSelect;
+	}
+
+	@Override
+	public JPanel getFrom() {
+		return from;
+	}
+
+	@Override
+	public JPanel getTo() {
+		return to;
+	}
+
+	@Override
+	public int getFromSide() {
+		return fromSide;
+	}
+
+	@Override
+	public int getToSide() {
+		return toSide;
 	}
 }

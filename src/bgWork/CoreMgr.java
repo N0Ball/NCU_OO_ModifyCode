@@ -13,10 +13,7 @@ public class CoreMgr implements Runnable
 	 * </pre>
 	 */
 	// necessary empty constructor
-	public CoreMgr()
-	{
-		// TODO Auto-generated constructor stub
-	}
+	public CoreMgr() { }
 
 	public CoreMgr(InitProcess proc)
 	{
